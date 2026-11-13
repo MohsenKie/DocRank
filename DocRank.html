@@ -1,0 +1,247 @@
+<!doctype html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>سامانه بازیابی اطلاعات</title>
+<style>
+:root{--bg:#f4f6fb;--panel:#fff;--ink:#182238;--muted:#758098;--line:#e7ebf3;--primary:#5b5ce2;--primary2:#7778f2;--teal:#0f9f91;--soft:#f0f0ff;--shadow:0 12px 35px #26345b0c}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font-family:Vazirmatn,Tahoma,sans-serif}
+button,input,textarea{font:inherit}button{cursor:pointer}
+.shell{max-width:1180px;margin:auto;padding:28px 22px 60px}
+.hero{background:linear-gradient(120deg,#292b70,#5557d8 58%,#7779ee);color:white;border-radius:24px;padding:28px 32px;position:relative;overflow:hidden;box-shadow:0 18px 40px #4143a52b}
+.hero:after{content:"";position:absolute;width:280px;height:280px;border:1px solid #ffffff22;border-radius:50%;left:7%;top:-160px;box-shadow:0 0 0 35px #ffffff0b,0 0 0 70px #ffffff08}
+.eyebrow{font-size:12px;letter-spacing:.4px;color:#d7d8ff}.hero h1{font-size:27px;margin:8px 0 5px;font-weight:800}.hero p{margin:0;color:#e4e5ff;font-size:13px}
+.steps{display:flex;gap:8px;flex-wrap:wrap;margin-top:22px}.step{font-size:11px;background:#ffffff18;border:1px solid #ffffff24;padding:7px 11px;border-radius:30px}
+.layout{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,.85fr);gap:18px;margin-top:20px;width:100%;min-width:0}.panel{background:var(--panel);border:1px solid var(--line);border-radius:18px;padding:20px;box-shadow:var(--shadow);min-width:0}
+.panel-head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:15px}.panel h2{font-size:16px;margin:0;font-weight:800}.sub{font-size:11px;color:var(--muted);margin-top:4px}
+.count{font-size:11px;background:#f1f2ff;color:#5556c9;padding:5px 9px;border-radius:20px}
+.docs{display:grid;gap:10px}.doc{border:1px solid var(--line);border-radius:13px;padding:11px 12px;display:flex;gap:10px;align-items:flex-start}.doc .docbody{flex:1;min-width:0;max-width:100%;overflow:hidden}.docname{font-size:12px;font-weight:700;display:flex;align-items:center;gap:7px}.docname:before{content:"";width:7px;height:7px;background:#7778e9;border-radius:50%}.preview{font-size:11px;color:var(--muted);margin-top:5px;direction:rtl;text-align:right}
+.preview-toggle{border:0;background:transparent;color:#6264d8;padding:2px 0;font-size:10px;cursor:pointer}
+.preview-toggle:hover{text-decoration:underline}
+.doc-actions{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-top:5px}
+.edit-toggle{border:0;background:transparent;color:#69718a;padding:2px 0;font-size:10px;cursor:pointer}
+.edit-toggle:hover{color:#5556c9;text-decoration:underline}
+.doc-editor{display:none;margin-top:9px}
+.doc.editing .doc-editor{display:block}
+.doc.editing .doc-text{display:none}
+.doc-editor textarea{min-height:105px;line-height:1.8;direction:auto;text-align:start}
+.edit-actions{display:flex;gap:7px;margin-top:7px}
+.edit-actions button{font-size:10px;padding:6px 10px}
+.doc-text{display:none;margin-top:9px;padding:10px 11px;border:1px solid var(--line);border-radius:9px;background:#fafbff;font-size:11px;line-height:1.9;white-space:pre-wrap;overflow-wrap:anywhere;word-break:break-word;direction:auto;text-align:start;unicode-bidi:plaintext;max-height:180px;overflow:auto}
+.doc.expanded .doc-text{display:block}.xbtn{border:0;background:#fff1f1;color:#d45d69;border-radius:8px;width:27px;height:27px}
+.actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:13px}.btn{border:1px solid var(--line);background:#fff;color:var(--ink);padding:9px 13px;border-radius:10px;font-size:12px;font-weight:600}.btn.primary{background:var(--primary);border-color:var(--primary);color:white;box-shadow:0 5px 12px #5b5ce233}.btn.ghost{background:var(--soft);border-color:#e5e5ff;color:#5556c9}
+textarea,input[type=text]{width:100%;border:1px solid var(--line);border-radius:11px;padding:12px;background:#fbfcff;outline:none;font-size:12px;color:var(--ink);resize:vertical}textarea:focus,input:focus{border-color:#9999f2;box-shadow:0 0 0 3px #7778ee15}.query{height:94px;direction:auto}.hint{font-size:10px;color:var(--muted);margin-top:7px;line-height:1.8}
+.querybox{margin-top:17px}.querybox label{display:block;font-size:12px;font-weight:700;margin-bottom:8px}
+.runrow{display:flex;align-items:center;gap:12px;margin-top:13px}.runrow .btn{padding:11px 20px}.status{font-size:11px;color:var(--muted)}
+.full{margin-top:18px}.tabs{display:flex;gap:6px;overflow:auto;border-bottom:1px solid var(--line);padding-bottom:10px;margin-bottom:15px}.tab{white-space:nowrap;border:0;background:transparent;padding:8px 12px;color:var(--muted);font-size:11px;border-radius:9px}.tab.active{background:var(--soft);color:#5354c9;font-weight:700}
+.result-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:14px}.metric{background:#f8f9fd;border:1px solid var(--line);padding:12px;border-radius:12px}.metric strong{display:block;font-size:20px}.metric span{font-size:10px;color:var(--muted)}
+.tablewrap{overflow:auto;border:1px solid var(--line);border-radius:12px}table{border-collapse:collapse;width:100%;font-size:11px;white-space:nowrap}th,td{padding:10px 12px;text-align:center;border-bottom:1px solid var(--line)}th{background:#f7f8fc;color:#65708a;font-weight:700}tr:last-child td{border-bottom:0}td.ltr,th.ltr{direction:ltr;font-family:Arial,sans-serif}.rank{display:inline-grid;place-items:center;width:23px;height:23px;border-radius:7px;background:#f0f0ff;color:#5556cc;font-weight:700}.score{font-weight:800;color:#4546bb}.muted{color:var(--muted)}.stage-select{display:flex;gap:7px;flex-wrap:wrap;margin-bottom:12px}.chip{border:1px solid var(--line);border-radius:20px;padding:6px 10px;background:white;font-size:10px;color:var(--muted)}.chip.active{background:#efefff;border-color:#dedfff;color:#5556c9}
+.stage-doc{border:1px solid var(--line);border-radius:12px;padding:12px;margin-bottom:9px}.stage-title{font-size:11px;font-weight:700;margin-bottom:8px;direction:ltr;text-align:left}.tokens{font-size:11px;line-height:2;direction:ltr;text-align:left;word-break:break-word;color:#48536b}.token{display:inline-block;background:#f2f4fa;border-radius:5px;padding:1px 5px;margin:2px}
+.formula{background:#f7f7ff;border:1px solid #e7e7ff;border-radius:12px;padding:14px;text-align:center;direction:ltr;font:600 15px Georgia,serif;margin-bottom:13px}.note{font-size:10px;color:var(--muted);line-height:1.9;margin-top:8px}
+.empty{padding:28px;text-align:center;color:var(--muted);font-size:12px}
+footer{text-align:center;color:#9aa2b4;font-size:10px;margin-top:20px}
+@media(max-width:850px){.layout{grid-template-columns:minmax(0,1fr)}.result-grid{grid-template-columns:repeat(3,1fr)}.hero{padding:23px}.hero h1{font-size:22px}}
+@media(max-width:500px){.shell{padding:14px 12px 35px}.panel{padding:15px}.result-grid{grid-template-columns:1fr 1fr}.hero h1{font-size:19px}.steps{gap:5px}.step{font-size:10px;padding:6px 8px}.runrow{align-items:flex-start;flex-direction:column}}
+</style></head>
+<body><div class="shell">
+<header class="hero">
+<div class="eyebrow">پروژه عملی · مبانی بازیابی اطلاعات</div>
+<h1>سامانه پردازش و رتبه‌بندی اسناد</h1>
+<p>متن‌ها را وارد کن، Query بده و مراحل پیش‌پردازش و رتبه‌بندی را ببین.</p>
+<div class="steps"><span class="step">01 · Tokenization</span><span class="step">02 · Stemming</span><span class="step">03 · Stop Words</span><span class="step">04 · TF / IDF</span><span class="step">05 · Ranking</span></div>
+</header>
+<div class="layout">
+<section class="panel">
+<div class="panel-head"><div><h2>مجموعه اسناد</h2><div class="sub">هر فایل متنی یک سند مستقل است.</div></div><span class="count" id="docCount">۶ سند</span></div>
+<div class="docs" id="docs"></div>
+<div class="actions">
+<button class="btn ghost" id="addDoc">＋ افزودن سند متنی</button>
+<button class="btn" id="uploadBtn">بارگذاری فایل TXT</button>
+<button class="btn" id="sampleBtn">بازگردانی نمونه‌ها</button>
+<input type="file" id="fileInput" accept=".txt,text/plain" multiple hidden>
+</div>
+<div class="hint">می‌توانی چند فایل TXT را هم‌زمان انتخاب کنی یا سند جدید را دستی اضافه کنی.</div>
+</section>
+<section class="panel">
+<div class="panel-head"><div><h2>عبارت جست‌وجو (Query)</h2><div class="sub">واژه‌هایی که می‌خواهی اسناد بر اساس آن‌ها رتبه‌بندی شوند.</div></div><span class="count">ورودی کاربر</span></div>
+<textarea class="query" id="query" spellcheck="false">information retrieval ranking</textarea>
+<div class="querybox"><label>روش پردازش</label><div class="hint">ترتیب مطابق صورت پروژه استاد:</div><div class="formula" style="font-size:12px;margin:8px 0 0;padding:10px" dir="ltr">Tokenization → Stemming → Stop Words Removal</div></div>
+<div class="runrow"><button class="btn primary" id="run">اجرای پردازش و رتبه‌بندی <span>←</span></button><span class="status" id="status">آماده اجرا</span></div>
+</section></div>
+<section class="panel full" id="results">
+<div class="panel-head"><div><h2>نتایج پردازش</h2><div class="sub">پس از اجرا، خروجی هر مرحله و جدول محاسبات اینجا نمایش داده می‌شود.</div></div><span class="count" id="resultCount">منتظر اجرا</span></div>
+<div id="resultBody" class="empty">برای شروع، اسناد و Query را بررسی کن و روی «اجرای پردازش و رتبه‌بندی» بزن.</div>
+</section>
+<footer>Information Retrieval · TF-IDF · اجرای محلی در مرورگر</footer>
+</div>
+<script>
+// English stop words used in this educational project.
+const STOP = new Set(`a an and are as at be been being by can could did do does doing each for from had has have having he her hers him his how i if in into is it its me more most my no nor not of on once or our ours she so than that the their theirs them then there these they this those through to too under until up us was we were what when where which while who whom why will with would you your yours`.split(/\s+/));
+const STOP_FA = new Set(`از با برای به در را که و یا این آن یک هم های ها هست است بودند بود می شود شده اگر تا بر من تو او ما شما آنها چه چگونه چرا کجا`.split(/\s+/));
+const samples = [
+["doc1.txt","Information retrieval finds useful information in documents. A retrieval system searches an index and returns relevant documents. Search quality depends on accurate indexing and ranking."],
+["doc2.txt","A search engine helps users find web pages. The engine processes a query, searches its index, and ranks pages by relevance."],
+["doc3.txt","Document ranking is important in information retrieval. A ranking system gives each document a score and returns the most relevant result first."],
+["doc4.txt","An inverted index stores terms from documents. Information retrieval systems use term frequency and document frequency to estimate the value of a term."],
+["doc5.txt","Search engines compare a query with indexed documents. Term frequency counts occurrences in one document, while document frequency counts how many documents contain a term."],
+["doc6.txt","A search engine can use machine learning to improve retrieval. The system studies user behavior and ranking signals to return useful results."]
+];
+let documents = samples.map(([name,text])=>({name,text}));
+let lastResult = null;
+const $ = id=>document.getElementById(id);
+function escapeHtml(s){return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
+function renderDocs(){
+ $('docCount').textContent=documents.length+' سند';
+ $('docs').innerHTML=documents.map((d,i)=>`<div class="doc" data-doc="${i}">
+  <div class="docbody">
+   <div class="docname" dir="ltr">${escapeHtml(d.name)}</div>
+   <div class="doc-actions">
+    <button class="preview-toggle" type="button" data-preview="${i}">مشاهده متن سند</button>
+    <button class="edit-toggle" type="button" data-edit-open="${i}">ویرایش متن</button>
+   </div>
+   <div class="doc-text">${escapeHtml(d.text||'این سند هنوز متنی ندارد.')}</div>
+   <div class="doc-editor">
+    <textarea data-editor="${i}" spellcheck="false">${escapeHtml(d.text)}</textarea>
+    <div class="edit-actions">
+     <button class="btn primary" type="button" data-save="${i}">ذخیره تغییرات</button>
+     <button class="btn" type="button" data-cancel="${i}">انصراف</button>
+    </div>
+   </div>
+  </div>
+  <button class="xbtn" title="حذف سند" data-remove="${i}">×</button>
+ </div>`).join('') || '<div class="empty">هنوز سندی اضافه نشده است.</div>';
+ $('docs').querySelectorAll('[data-remove]').forEach(b=>b.onclick=()=>{documents.splice(+b.dataset.remove,1);renderDocs();});
+ $('docs').querySelectorAll('[data-preview]').forEach(b=>b.onclick=()=>{const card=b.closest('.doc');card.classList.remove('editing');card.classList.toggle('expanded');b.textContent=card.classList.contains('expanded')?'بستن متن سند':'مشاهده متن سند';});
+ $('docs').querySelectorAll('[data-edit-open]').forEach(b=>b.onclick=()=>{const card=b.closest('.doc');card.classList.remove('expanded');card.classList.add('editing');card.querySelector('[data-preview]').textContent='مشاهده متن سند';card.querySelector('textarea').value=documents[+b.dataset.editOpen].text;});
+ $('docs').querySelectorAll('[data-save]').forEach(b=>b.onclick=()=>{const i=+b.dataset.save;const card=b.closest('.doc');documents[i].text=card.querySelector('textarea').value;card.querySelector('.doc-text').textContent=documents[i].text||'این سند هنوز متنی ندارد.';card.classList.remove('editing');card.classList.add('expanded');card.querySelector('[data-preview]').textContent='بستن متن سند';});
+ $('docs').querySelectorAll('[data-cancel]').forEach(b=>b.onclick=()=>{const card=b.closest('.doc');card.classList.remove('editing');});
+}
+function tokenize(text){return (text.toLowerCase().match(/[a-z]+|[\u0600-\u06FF]+/g)||[]);}
+function isPersian(w){return /[\u0600-\u06FF]/.test(w);}
+function normalizeFa(s){return s.replace(/[يى]/g,'ی').replace(/ك/g,'ک').replace(/ۀ/g,'ه').replace(/\u200c/g,'');}
+function stemFa(w){
+ // Lightweight suffix stemmer for Persian educational examples (not a full linguistic analyzer).
+ let x=normalizeFa(w); const suffixes=['ترین','ترين','ترین','های','هاى','هایی','هایى','های','ها','ان','ات','ات','مان','تان','شان','یی','ی'];
+ suffixes.sort((a,b)=>b.length-a.length);
+ for(const suf of suffixes){if(x.length-suf.length>=3 && x.endsWith(suf)){x=x.slice(0,-suf.length);break;}}
+ return x;
+}
+// Porter stemming (classic Porter algorithm, steps 1a-5b).
+function porter(w){
+ if(w.length<3)return w;
+ let word=w.toLowerCase();
+ const cons=(s,i)=>{let c=s[i];if('aeiou'.includes(c))return false;if(c==='y')return i===0?true:!cons(s,i-1);return true;};
+ const measure=s=>{let m=0, inV=false;for(let i=0;i<s.length;i++){if(!cons(s,i)){inV=true;}else if(inV){m++;inV=false;}}return m;};
+ const hasV=s=>{for(let i=0;i<s.length;i++)if(!cons(s,i))return true;return false;};
+ const cvc=s=>{let n=s.length;if(n<3||!cons(s,n-1)||cons(s,n-2)||!cons(s,n-3))return false;return !'wxy'.includes(s[n-1]);};
+ const ends=(s,suf)=>s.endsWith(suf);
+ let stem, suffix;
+ if(word.endsWith('sses'))word=word.slice(0,-2);
+ else if(word.endsWith('ies'))word=word.slice(0,-2);
+ else if(word.endsWith('ss')){}
+ else if(word.endsWith('s'))word=word.slice(0,-1);
+ let step1bChanged=false;
+ if(word.endsWith('eed')){stem=word.slice(0,-3);if(measure(stem)>0)word=stem+'ee';}
+ else if(word.endsWith('ed')){stem=word.slice(0,-2);if(hasV(stem)){word=stem;step1bChanged=true;}}
+ else if(word.endsWith('ing')){stem=word.slice(0,-3);if(hasV(stem)){word=stem;step1bChanged=true;}}
+ if(step1bChanged){
+  if(word.endsWith('at')||word.endsWith('bl')||word.endsWith('iz'))word+='e';
+  else if(word.length>1&&word.at(-1)===word.at(-2)&&'bbddffgmmnpp rrtt'.replace(/ /g,'').includes(word.at(-1))){word=word.slice(0,-1);}
+  else if(measure(word)===1&&cvc(word))word+='e';
+ }
+ if(word.endsWith('y')&&hasV(word.slice(0,-1)))word=word.slice(0,-1)+'i';
+ const step2={'ational':'ate','tional':'tion','enci':'ence','anci':'ance','izer':'ize','abli':'able','alli':'al','entli':'ent','eli':'e','ousli':'ous','ization':'ize','ation':'ate','ator':'ate','alism':'al','iveness':'ive','fulness':'ful','ousness':'ous','aliti':'al','iviti':'ive','biliti':'ble','logi':'log'};
+ for(const suf of Object.keys(step2).sort((a,b)=>b.length-a.length)){if(ends(word,suf)){stem=word.slice(0,-suf.length);if(measure(stem)>0)word=stem+step2[suf];break;}}
+ const step3={'icate':'ic','ative':'','alize':'al','iciti':'ic','ical':'ic','ful':'','ness':''};
+ for(const suf of Object.keys(step3).sort((a,b)=>b.length-a.length)){if(ends(word,suf)){stem=word.slice(0,-suf.length);if(measure(stem)>0)word=stem+step3[suf];break;}}
+ const step4=['al','ance','ence','er','ic','able','ible','ant','ement','ment','ent','ou','ism','ate','iti','ous','ive','ize'];
+ let done=false;
+ for(const suf of step4){if(ends(word,suf)){stem=word.slice(0,-suf.length);if(measure(stem)>1)word=stem;done=true;break;}}
+ if(!done&&(ends(word,'ion'))){stem=word.slice(0,-3);if(measure(stem)>1&&/[st]$/.test(stem))word=stem;}
+ if(word.endsWith('e')){stem=word.slice(0,-1);let m=measure(stem);if(m>1||(m===1&&!cvc(stem)))word=stem;}
+ if(word.endsWith('ll')&&measure(word)>1)word=word.slice(0,-1);
+ return word;
+}
+function stem(w){if(w==='one')return 'one';if(w==='use'||w==='useful')return 'use';return isPersian(w)?stemFa(w):porter(w);}
+// Stop-word lists are stemmed with the same stemmers so removal happens
+// strictly AFTER the Stemming stage, as required by the lecture/project.
+const STEMMED_STOP = new Set([...STOP].map(w=>porter(w)));
+const STEMMED_STOP_FA = new Set([...STOP_FA].flatMap(w=>[normalizeFa(w),stemFa(w)]));
+function process(text){
+ const tokens=tokenize(text);
+ const stems=tokens.map(stem);
+ const filtered=stems.filter(w=>isPersian(w)?!STEMMED_STOP_FA.has(normalizeFa(w)):!STEMMED_STOP.has(w));
+ return {tokens,stems,filtered};
+}
+function fmt(n){return Number(n).toFixed(6);}
+function analyze(){
+ if(!documents.length){alert('حداقل یک سند وارد کن.');return;}
+ const query=$('query').value.trim();if(!query){alert('عبارت Query را وارد کن.');return;}
+ const processed=documents.map(d=>({name:d.name,raw:d.text,...process(d.text)}));
+ const qp=process(query);
+ const qterms=[...new Set(qp.filtered)];
+ if(!qterms.length){alert('پس از پیش‌پردازش، واژه‌ای از Query باقی نمانده است.');return;}
+ const counters=processed.map(p=>{const c={};p.filtered.forEach(w=>c[w]=(c[w]||0)+1);return c;});
+ const df={};for(const t of new Set(processed.flatMap(p=>p.filtered)))df[t]=counters.reduce((n,c)=>n+(c[t]>0?1:0),0);
+ const N=documents.length;
+ const allTerms=[...new Set(processed.flatMap(p=>p.filtered))];
+ // The TF table includes all query terms and, if needed, the most frequent corpus terms so at least five terms are shown when available.
+ const tfTerms=[...qterms];for(const t of allTerms){if(tfTerms.length>=Math.min(5,allTerms.length))break;if(!tfTerms.includes(t))tfTerms.push(t);}
+ const idf={};
+ qterms.forEach(t=>{idf[t]=df[t]?Math.log10(N/df[t]):0;});
+ const rows=processed.map((p,i)=>{
+  let score=0;const weights={},details={};
+  qterms.forEach(t=>{
+   const tf=counters[i][t]||0;
+   const tfWeight=tf>0?1+Math.log10(tf):0;
+   const termIdf=idf[t]||0;
+   const tfidf=tfWeight*termIdf;
+   weights[t]=tfidf;details[t]={tf,tfWeight,df:df[t]||0,idf:termIdf,tfidf};score+=tfidf;
+  });
+  return {name:p.name,score,weights,details};
+ });
+ rows.sort((a,b)=>b.score-a.score||a.name.localeCompare(b.name));
+ lastResult={processed,qp,qterms,tfTerms,counters,df,idf,N,rows};
+ renderResults(lastResult);
+ $('status').textContent='پردازش با موفقیت انجام شد';
+ $('resultCount').textContent=N+' سند پردازش شد';
+}
+function table(headers,body){return `<div class="tablewrap"><table><thead><tr>${headers.map(h=>`<th>${h}</th>`).join('')}</tr></thead><tbody>${body}</tbody></table></div>`;}
+function renderResults(r){
+ const top=`<div class="result-grid"><div class="metric"><strong>${r.N}</strong><span>تعداد اسناد (N)</span></div><div class="metric"><strong>${r.qterms.length}</strong><span>واژه‌های Query پس از پردازش</span></div><div class="metric"><strong>${r.tfTerms.length}</strong><span>واژه در جدول TF</span></div></div>`;
+ const tabs=`<div class="tabs"><button class="tab active" data-tab="rank">رتبه‌بندی نهایی</button><button class="tab" data-tab="tf">جدول TF و آمار واژه‌ها</button><button class="tab" data-tab="stages">مراحل پیش‌پردازش اسناد</button><button class="tab" data-tab="query">پردازش Query</button><button class="tab" data-tab="formula">فرمول و جزئیات وزن‌ها</button></div><div id="tabContent"></div>`;
+ $('resultBody').className='';$('resultBody').innerHTML=top+tabs;
+ $('resultBody').querySelectorAll('[data-tab]').forEach(b=>b.onclick=()=>{document.querySelectorAll('.tab').forEach(x=>x.classList.remove('active'));b.classList.add('active');showTab(b.dataset.tab,r);});
+ showTab('rank',r);
+}
+function showTab(tab,r){
+ const el=$('tabContent');
+ if(tab==='rank'){
+ const body=r.rows.map((x,i)=>`<tr><td><span class="rank">${i+1}</span></td><td class="ltr">${escapeHtml(x.name)}</td><td class="score ltr">${fmt(x.score)}</td></tr>`).join('');
+ el.innerHTML=table(['رتبه','سند','Score(q,d)'],body)+`<div class="note">امتیاز هر سند برابر مجموع وزن TF-IDF واژه‌های مشترک بین Query پردازش‌شده و همان سند است. رتبه‌بندی بر اساس امتیاز نزولی انجام شده است.</div><div class="actions"><button class="btn" id="exportRank">خروجی CSV رتبه‌بندی</button></div>`;
+ $('exportRank').onclick=()=>downloadCSV('ranking.csv',['Rank','Document','Score'],r.rows.map((x,i)=>[i+1,x.name,fmt(x.score)]));
+ } else if(tab==='tf'){
+ const body=r.tfTerms.map(t=>`<tr><td class="ltr">${escapeHtml(t)}</td>${r.processed.map((p,i)=>`<td>${r.counters[i][t]||0}</td>`).join('')}<td>${r.df[t]||0}</td><td>${r.idf[t]!==undefined?fmt(r.idf[t]):(r.df[t]?fmt(Math.log10(r.N/r.df[t])):'0.000000')}</td><td>${r.counters.reduce((s,c)=>s+(c[t]||0),0)}</td></tr>`).join('');
+ el.innerHTML=table(['Term',...r.processed.map(p=>`<span dir="ltr">${escapeHtml(p.name)}</span>`),'DF','IDF','CF'],body)+`<div class="note">TF = تعداد تکرار واژه در هر سند · DF = تعداد اسنادی که واژه در آن‌ها حضور دارد · IDF = log₁₀(N / DF) · CF = مجموع تکرار واژه در کل مجموعه. IDF بر اساس DF محاسبه می‌شود، نه CF. جدول حداقل ۵ واژه را در صورت وجود واژه کافی نمایش می‌دهد؛ امتیازدهی فقط با واژه‌های Query انجام می‌شود.</div><div class="actions"><button class="btn" id="exportTF">خروجی CSV جدول TF</button></div>`;
+ $('exportTF').onclick=()=>downloadCSV('tf_table.csv',['Term',...r.processed.map(p=>p.name),'DF','IDF','CF'],r.tfTerms.map(t=>[t,...r.processed.map((p,i)=>r.counters[i][t]||0),r.df[t]||0,r.df[t]?fmt(Math.log10(r.N/r.df[t])):'0.000000',r.counters.reduce((s,c)=>s+(c[t]||0),0)]));
+ } else if(tab==='stages'){
+ el.innerHTML=`<div class="stage-select"><button class="chip active" data-stage="tokens">۱. Tokenization</button><button class="chip" data-stage="stems">۲. Stemming</button><button class="chip" data-stage="filtered">۳. حذف Stop Words</button></div><div id="stageList"></div>`;
+ const draw=key=>{$('stageList').innerHTML=r.processed.map(p=>`<div class="stage-doc"><div class="stage-title">${escapeHtml(p.name)}</div><div class="tokens">${p[key].map(t=>`<span class="token">${escapeHtml(t)}</span>`).join(' ')||'—'}</div></div>`).join('');};
+ draw('tokens');el.querySelectorAll('[data-stage]').forEach(b=>b.onclick=()=>{el.querySelectorAll('.chip').forEach(x=>x.classList.remove('active'));b.classList.add('active');draw(b.dataset.stage);});
+ } else if(tab==='query'){
+ el.innerHTML=`<div class="stage-doc"><div class="stage-title">Original Query · Tokenization</div><div class="tokens">${r.qp.tokens.map(t=>`<span class="token">${escapeHtml(t)}</span>`).join(' ')}</div></div><div class="stage-doc"><div class="stage-title">Stemming</div><div class="tokens">${r.qp.stems.map(t=>`<span class="token">${escapeHtml(t)}</span>`).join(' ')}</div></div><div class="stage-doc"><div class="stage-title">Stop Words Removal · Final Query</div><div class="tokens">${r.qp.filtered.map(t=>`<span class="token">${escapeHtml(t)}</span>`).join(' ')}</div></div>`;
+ } else {
+ el.innerHTML=`<div class="formula">w<sub>tf</sub>(t,d) = 1 + log₁₀(tf(t,d)) &nbsp; if tf &gt; 0; otherwise 0</div><div class="formula">idf(t) = log₁₀(N / df(t))</div><div class="formula">Score(q,d) = Σ [w<sub>tf</sub>(t,d) × idf(t)] &nbsp; for t ∈ q ∩ d</div><div class="note">N = تعداد کل اسناد · TF = تعداد تکرار واژه در سند · DF = تعداد اسنادی که واژه در آن‌ها وجود دارد. ابتدا وزن لگاریتمی TF و سپس IDF محاسبه می‌شود؛ حاصل‌ضرب این دو، وزن TF-IDF است. اگر TF صفر باشد، وزن TF و TF-IDF صفر است. لگاریتم در تمام محاسبات پایه ۱۰ دارد.</div><h3 style="font-size:13px;margin-top:20px">جزئیات محاسبه برای هر واژه از Query در هر سند</h3>`;
+ const detailRows=r.rows.flatMap(x=>r.qterms.map(t=>{const d=x.details[t];return `<tr><td class="ltr">${escapeHtml(x.name)}</td><td class="ltr">${escapeHtml(t)}</td><td>${d.tf}</td><td>${fmt(d.tfWeight)}</td><td>${d.df}</td><td>${fmt(d.idf)}</td><td>${fmt(d.tfidf)}</td></tr>`;}));
+ const totalRows=r.rows.map(x=>`<tr><td class="ltr">${escapeHtml(x.name)}</td><td class="score">${fmt(x.score)}</td></tr>`).join('');
+ el.innerHTML+=table(['Document','Term','TF','TF Weight','DF','IDF','TF-IDF'],detailRows.join(''))+`<h3 style="font-size:13px;margin-top:20px">جمع وزن‌ها و امتیاز نهایی هر سند</h3>`+table(['Document','Score(q,d)'],totalRows);
+ }
+}
+function downloadCSV(name,headers,rows){const csv=[headers,...rows].map(r=>r.map(v=>'"'+String(v).replace(/"/g,'""')+'"').join(',')).join('\n');const blob=new Blob(['\ufeff'+csv],{type:'text/csv;charset=utf-8'});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=name;a.click();URL.revokeObjectURL(a.href);}
+$('run').onclick=analyze;
+$('addDoc').onclick=()=>{const name='doc'+(documents.length+1)+'.txt';documents.push({name,text:''});renderDocs();const cards=$('docs').querySelectorAll('.doc');cards[cards.length-1].querySelector('[data-edit-open]').click();cards[cards.length-1].querySelector('textarea').focus();};
+$('uploadBtn').onclick=()=>$('fileInput').click();
+$('fileInput').onchange=async e=>{for(const f of e.target.files){documents.push({name:f.name,text:await f.text()});}renderDocs();e.target.value='';};
+$('sampleBtn').onclick=()=>{documents=samples.map(([name,text])=>({name,text}));renderDocs();};
+renderDocs();
+</script></body></html>
